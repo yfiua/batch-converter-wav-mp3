@@ -1,0 +1,22 @@
+# Convert all .wav files to .mp3
+@all: [deps.mp3];
+
+>deps.mp3: mkmp3.pl
+{
+    find ./wav -type f -name *.wav | ./mkmp3.pl
+}
+
+mp3/$FILE.mp3: -p mp3/
+{
+    ffmpeg -i "wav/$FILE.wav" -acodec mp3 "mp3/$FILE.mp3"
+}
+
+mp3/:
+{
+    find ./wav -type d -print0 | sed 's/\.\/wav/\.\/mp3/g' | xargs -0 mkdir -p
+}
+
+@clean:
+{
+    rm deps.mp3
+}
